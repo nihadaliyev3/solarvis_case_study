@@ -1,0 +1,11 @@
+# Backend (Python/FastAPI)
+**/venv/
+**/__pycache__/
+.mypy_cache/
+.env 
+.log
+# Frontend (React)
+**/node_modules/
+**/build/
+
+**/solarvis_env/

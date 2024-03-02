@@ -1,0 +1,32 @@
+.sign-in-page{
+    background-color: #474E68;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+
+.form-heading {
+    color: #6B728E;
+    font-size: 42px;
+    font-family: 'Arial Black', sans-serif; 
+    align-items: center;
+}
+
+.small-alert {
+    padding: 0.1rem; 
+    font-size: 0.9rem;
+}
+
+.sign-up-link {
+    margin-left: 0.2rem;
+    color: #474E68;
+    text-decoration: none;
+}
