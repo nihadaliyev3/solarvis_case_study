@@ -1,5 +1,5 @@
 from fastapi import Depends, FastAPI, status, HTTPException
-import models, db_connection, db_operations, logs, items
+import models, db_connection, db_operations, logs, items, users
 from auth.auth_router import router
 from auth.helpers import hash_password
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,6 +9,7 @@ from sqlalchemy.orm.session import Session
 app = FastAPI()
 app.include_router(router)
 app.include_router(items.items_router)
+app.include_router(users.users_router)
 
 async def startup():
     models.Base.metadata.create_all(bind=db_connection.engine)
@@ -30,19 +31,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.post("/signup", status_code=status.HTTP_201_CREATED) 
-async def create_user(user: models.UserCreate, db: Session = Depends(db_connection.get_db)):
-    hashed_password = hash_password(user.password)
-    user_data = user.model_dump()
-    user_data['password'] = hashed_password
-
-    try:
-        new_user = db_operations.create_new_user(db, user_data)
-        logs.create_logger.info(f'{new_user.role} "{new_user.email}" created successfully')
-        return {"message": "User created successfully."}  
-    except Exception as e: 
-        # Handle potential errors, considering specific exception types
-        logs.create_logger.error(f'{user.role} "{user.email}" create failed! Error detail: {str(e)}')
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) 

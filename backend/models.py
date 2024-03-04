@@ -30,6 +30,7 @@ class User(Base):
     password = Column(String(124))
     role = Column(Enum(Role))
     is_suspended = Column(Boolean, default=False, nullable=True)
+    items = relationship('Item', backref='owner', cascade='all, delete')
 
 class Item(Base):
     __tablename__ = "items"
@@ -38,17 +39,15 @@ class Item(Base):
     description = Column(Text, nullable=True)
     create_date = Column(DateTime, default=datetime.utcnow, nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship("User", backref="items")
 
 class UserAdminSuspension(Base):
     __tablename__ = "user_admin_suspensions"
     id = Column(Integer, primary_key=True, index=True)
-    suspended_user_id = Column(Integer, ForeignKey("users.id"))
+    suspended_user_id = Column(Integer, ForeignKey("users.id"), unique=True)
     suspending_admin_id = Column(Integer, ForeignKey("users.id"))
     suspension_date = Column(DateTime, default=datetime.utcnow)
-    is_deleted = Column(Boolean, default=False, nullable=True) #instead of deleting the row we will switch the column to True
-
     suspending_admin = relationship("User", foreign_keys=[suspending_admin_id])
+    suspended_user = relationship("User", foreign_keys=[suspended_user_id]) 
 
 
 class UserCreate(BaseModel):
@@ -62,3 +61,5 @@ class ItemCreate(BaseModel):
     name: str
     description: str| None
     
+class UserSuspend(BaseModel):
+    is_suspended: bool

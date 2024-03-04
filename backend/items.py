@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm.session import Session
 from auth.helpers import get_current_user
 from db_connection import get_db  # Adjust import path as needed
-from db_operations import get_all_items, get_items_of_user, remove_item, create_new_item
+from db_operations import get_all_items, get_items_of_user, remove_item, create_new_item, update_item
 from models import User, Item, ItemCreate
 import logs
 from datetime import datetime
@@ -54,3 +54,24 @@ async def create_item(item: ItemCreate, db: Session = Depends(get_db), current_u
     except Exception as e: 
         logs.create_logger.error(f'{current_user.email} failed to create item {str(item_data)}! Error detail: {str(e)}')
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) 
+    
+
+@items_router.put("/{id}", status_code=status.HTTP_200_OK)
+async def update_item_by_id(id: int, item_data: ItemCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+
+    if current_user.role.value not in ["Admin", "SuperAdmin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to perform this action"
+        )
+
+    item = update_item(db, item_id=id, item_data=item_data)
+
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item not found"
+        )
+
+    logs.update_logger.info(f'{current_user.role} {current_user.email} updated item {item.id} successfully!')
+    return item 

@@ -2,12 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 import CreateItemModal from './CreateItemModal'; 
+import UpdateItemModal from './UpdateItemModal';
 import API_BASE_URL from '../config';
 import axios from 'axios';
 
 const Items = ({ userRole }) => {
   const [items, setItems] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
   const token = localStorage.getItem('jwtToken');
   
   useEffect(() => {
@@ -33,7 +36,7 @@ const Items = ({ userRole }) => {
     };
 
     fetchItems();
-  }, []); 
+  }, [refreshTrigger]); 
 
 
   async function handleDelete(itemId) {
@@ -55,7 +58,6 @@ const Items = ({ userRole }) => {
   }
 
   async function handleEdit(itemId) {}
-  async function handleCreate() {}
 
   return (
     <div>
@@ -86,13 +88,13 @@ const Items = ({ userRole }) => {
                 <td>{item.create_date}</td>
                 {userRole === 'SuperAdmin' && (
                 <div>
-                    <button onClick={() => handleEdit(item.id)}>Edit</button>
+                    <button onClick={() => setShowUpdateModal(item)}>Edit</button>
                     <button onClick={() => handleDelete(item.id)}>Delete</button>
                 </div>
                 )}
                 {userRole === 'Admin' && (
                 <div>
-                    <button onClick={() => handleEdit(item.id)}>Edit</button>
+                    <button onClick={() => setShowUpdateModal(item)}>Edit</button>
                     <button onClick={() => handleDelete(item.id)}>Delete</button>
                 </div>
                 )}
@@ -109,7 +111,19 @@ const Items = ({ userRole }) => {
         show={showCreateModal}
         onHide={() => setShowCreateModal(false)}
         token={token}
+        onCreate={() => setRefreshTrigger(!refreshTrigger)}
       />
+      {showUpdateModal && (
+      <UpdateItemModal
+      show={showUpdateModal !== null}
+      onHide={() => setShowUpdateModal(null)}
+      token={token}
+      onUpdate={(updatedItem) => {
+        setItems(prevItems => prevItems.map(item => item.id === updatedItem.id ? updatedItem : item));
+      }}
+      item={showUpdateModal}
+      />
+      )}
     </div>
   );
 }

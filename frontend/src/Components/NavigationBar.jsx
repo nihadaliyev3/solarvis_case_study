@@ -19,8 +19,7 @@ function NavigationBar({ userRole }) {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav variant="tabs" className="me-auto" defaultActiveKey="/" bg='light'>
             <Nav.Link href="/">Items</Nav.Link>
-            <Nav.Link href="#pricing">Users</Nav.Link>
-            <Nav.Link href="#profile">Profile</Nav.Link>
+            <Nav.Link eventKey="/users" href="/users">Users</Nav.Link>
           </Nav>
           <Nav>
             <Button variant="secondary" onClick={handleLogout}>Logout</Button>

@@ -4,17 +4,22 @@ import API_BASE_URL from '../config';
 
 import axios from 'axios';
 
-function CreateItemModal({ show, onHide, token, onCreate }) {
-  const [itemName, setItemName] = useState('');
-  const [itemDescription, setItemDescription] = useState(''); 
+function UpdateItemModal({ show, onHide, token, onUpdate, item }) {
+  const [itemName, setItemName] = useState(item.name);
+  const [itemDescription, setItemDescription] = useState(item.description); 
   const [message, setMessage] = useState(null); 
 
   const handleSubmit = async (e) => {
     setMessage(null);
     e.preventDefault();
 
+    if (itemName===item.name && itemDescription===item.description){
+      setMessage("No Change");
+      return;
+    }
+
     try {
-      const response = await axios.post(`${API_BASE_URL}/items/new_item`, {
+      const response = await axios.put(`${API_BASE_URL}/items/${item.id}`, {
         name: itemName,
         description: itemDescription
       }, { headers: {
@@ -24,15 +29,15 @@ function CreateItemModal({ show, onHide, token, onCreate }) {
 
       console.log(response); 
 
+      const updatedItem = response.data;
       
-      setItemName('');
-      setItemDescription('');
       setMessage("Success!");
-      onCreate();
+      updatedItem['user_email'] = item.user_email;
+      onUpdate(updatedItem);
       
       
     } catch (error) {
-      console.error('Error creating item:', error);
+      console.error('Error updating item:', error);
       setMessage("Fail!");
     }
   };
@@ -40,7 +45,7 @@ function CreateItemModal({ show, onHide, token, onCreate }) {
   return (
     <Modal show={show} onHide={onHide}> 
       <Modal.Header closeButton>
-          <Modal.Title>Create New Item</Modal.Title>
+          <Modal.Title>Update {item.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
@@ -67,7 +72,7 @@ function CreateItemModal({ show, onHide, token, onCreate }) {
             {message && (<Alert className="mb-2" variant="info" style={{ padding: '0.3rem', fontSize: '0.9rem' }}>{message}</Alert> )}
 
             <Button variant="primary" className="m-2" type="submit">
-              Create
+              Update
             </Button>
           </Form>
         </Modal.Body>
@@ -75,4 +80,4 @@ function CreateItemModal({ show, onHide, token, onCreate }) {
   );
 }
 
-export default CreateItemModal;
+export default UpdateItemModal;

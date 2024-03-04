@@ -52,7 +52,7 @@ const NewUser = ({formName, onResponse}) => {
     // Only send the request if frontend validation passes
     if (form.checkValidity() && password === repeatedPassword) { 
       try {
-        const response = await axios.post(`${API_BASE_URL}/signup`, {
+        const response = await axios.post(`${API_BASE_URL}/users/signup`, {
           firstName,
           lastName,
           email,

@@ -8,7 +8,7 @@ import HomeComponent from './Components/HomeComponent';
 import Items from './Components/Items';
 import { jwtDecode } from 'jwt-decode';
 import Layout from './Components/Layout';
-
+import UsersTable from './Components/UsersTable';
 
 const Roles = { ADMIN: 'Admin', SUPER_ADMIN: 'SuperAdmin', BASIC_USER: 'BasicUser' };
 
@@ -29,6 +29,7 @@ function App() {
         <Layout userRole={userRole}>
             <Routes>
               <Route path="/" element={<ProtectedRoute allowedRoles={[Roles.BASIC_USER, Roles.ADMIN, Roles.SUPER_ADMIN]} WrappedComponent={Items} />} />
+              <Route path="/users" element={<ProtectedRoute allowedRoles={[Roles.BASIC_USER, Roles.ADMIN, Roles.SUPER_ADMIN]} WrappedComponent={UsersTable} />} />
               <Route path="/signin" element={<SignIn onSignInSuccess={(role) => setUserRole(role)} />} /> 
               <Route path="/signup" element={<SignUp />} />
               <Route path="/unauthorized" element={<HomeComponent />} />

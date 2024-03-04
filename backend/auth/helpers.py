@@ -35,8 +35,11 @@ async def authenticate_user(email: str, password: str, db: Session = Depends(get
     user = get_user_by_email(db, email)
     if not user:
         return False
+    elif user.is_suspended:
+        return False
     if not verify_password(password, user.password):
         return False
+    
     return user
 
 
@@ -61,6 +64,8 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
             raise credentials_exception
         user = get_user_by_email(db, email)
         if user is None:
+            raise credentials_exception
+        if user.is_suspended:
             raise credentials_exception
         return user  
     except JWTError:
