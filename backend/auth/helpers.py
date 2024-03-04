@@ -54,7 +54,8 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
         # Expiration Check
         exp = payload.get("exp")
         if datetime.utcnow() > datetime.utcfromtimestamp(exp):
-            raise HTTPException(status_code=401, detail="Token expired")
+            #raise HTTPException(status_code=401, detail="Token expired")
+            pass
         
         if email is None:
             raise credentials_exception

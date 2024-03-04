@@ -1,17 +1,28 @@
-import  React, { useState } from 'react';
+import  React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './SignIn.css'
 import API_BASE_URL from '../config';
+import { jwtDecode } from 'jwt-decode';
 
-const SignIn = () => {
+
+const SignIn = ({ onSignInSuccess }) => {
+  const navigate = useNavigate(); 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(null); 
+  
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+        navigate('/'); // Redirect to home if token exists
+    }
+  }, []);
+
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     const formData = new FormData();
     formData.append('username', username);
@@ -21,10 +32,16 @@ const SignIn = () => {
       const response = await axios.post(`${API_BASE_URL}/auth/signin`, formData);
 
       // Store JWT token (e.g., in localStorage)
-      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('jwtToken', response.data.access_token);
 
       // Redirect to a protected area of your app or update UI
       console.log('Sign in successful'); 
+
+      const decodedToken = jwtDecode(response.data.access_token);
+      onSignInSuccess(decodedToken.role); 
+
+      window.location.href = 'http://localhost:3000'; 
+      
 
     } catch (error) {
       setErrorMessage('Invalid username or password'); // Handle error

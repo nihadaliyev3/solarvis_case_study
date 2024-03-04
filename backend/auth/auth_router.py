@@ -4,7 +4,7 @@ from sqlalchemy.orm.session import Session
 from .helpers import authenticate_user, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 from db_connection import get_db  # Adjust import path as needed
 from datetime import datetime, timedelta
-import logs
+from logs import login_logger
 
 
 router = APIRouter(prefix="/auth")
@@ -25,11 +25,12 @@ async def signin(form_data: OAuth2PasswordRequestForm = Depends(), db: Session =
             )
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": user.email}, expires_delta=access_token_expires
+            data={"sub": user.email, "role": user.role.value}, expires_delta=access_token_expires
         )
-        logs.login_logger.info(f'Successful login of {user.email}')
+        login_logger.error(f'Successful login of {user.email}')
         return {"access_token": access_token, "token_type": "bearer"}
     except Exception as e:
+        login_logger.error(f'Failed login for {form_data.username}')
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Incorrect username or password" 

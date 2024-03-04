@@ -3,7 +3,7 @@
 **/__pycache__/
 .mypy_cache/
 .env 
-.log
+*.log
 # Frontend (React)
 **/node_modules/
 **/build/

@@ -1,19 +1,25 @@
 import logging
-
-login_logger = logging.getLogger('login')
-update_logger = logging.getLogger('update')
-create_logger = logging.getLogger('create')
-suspensions_logger = logging.getLogger('suspensions')
-
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
-login_handler = logging.FileHandler('login.log').setFormatter(formatter) 
-update_handler = logging.FileHandler('update.log').setFormatter(formatter) 
-create_handler = logging.FileHandler('create.log').setFormatter(formatter) 
-suspensions_handler = logging.FileHandler('suspensions.log').setFormatter(formatter)
+login_handler = logging.FileHandler('login.log')
+login_handler.setFormatter(formatter) 
+update_handler = logging.FileHandler('update.log')
+update_handler.setFormatter(formatter) 
+create_handler = logging.FileHandler('create.log')
+create_handler.setFormatter(formatter) 
+suspensions_handler = logging.FileHandler('suspensions.log')
+suspensions_handler.setFormatter(formatter)
 
 
+login_logger = logging.getLogger('login')
+login_logger.setLevel(logging.INFO)
 login_logger.addHandler(login_handler)
+update_logger = logging.getLogger('update')
 update_logger.addHandler(update_handler)
+update_logger.setLevel(logging.INFO)
+create_logger = logging.getLogger('create')
 create_logger.addHandler(create_handler)
+create_logger.setLevel(logging.INFO)
+suspensions_logger = logging.getLogger('suspensions')
 suspensions_logger.addHandler(suspensions_handler)
+suspensions_logger.setLevel(logging.INFO)

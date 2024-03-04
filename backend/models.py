@@ -35,8 +35,8 @@ class Item(Base):
     __tablename__ = "items"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100))
-    description = Column(Text)
-    create_date = Column(DateTime, default=datetime.utcnow)
+    description = Column(Text, nullable=True)
+    create_date = Column(DateTime, default=datetime.utcnow, nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", backref="items")
 
@@ -57,3 +57,8 @@ class UserCreate(BaseModel):
     email: str
     password: str
     role: str
+
+class ItemCreate(BaseModel):
+    name: str
+    description: str| None
+    

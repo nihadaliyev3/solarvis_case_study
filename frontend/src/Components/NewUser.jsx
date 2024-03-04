@@ -175,7 +175,7 @@ const NewUser = ({formName, onResponse}) => {
         {success && (<Alert className="mb-2" variant="success" style={{ padding: '0.3rem', fontSize: '0.9rem', marginTop:'3rem' }}>
             <p className="text-center mt-3" style={{ fontSize: '1.2rem', color: '#6B728E'}}> 
                   User created successfully!  
-                  {formName=="Sign Up" && <Link className='sign-up-link' to="/">Sign In</Link> }
+                  {formName==="Sign Up" && <Link className='sign-up-link' to="/signin">Sign In</Link> }
             </p>
         </Alert> )}
         <div className="d-grid gap-2 p-3">
